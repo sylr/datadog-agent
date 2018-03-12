@@ -24,3 +24,9 @@ func GetPodServiceNames(nodeName string, podName string) []string {
 	log.Errorf("GetPodServiceNames not implemented %s", ErrNotCompiled.Error())
 	return nil
 }
+
+// StartServiceMapping is only called once, when we have confirmed we could correctly connect to the API server.
+func (c *APIClient) StartServiceMapping() {
+	log.Errorf("StartServiceMapping not implemented %s", ErrNotCompiled.Error())
+	return nil
+}
