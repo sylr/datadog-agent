@@ -154,7 +154,7 @@ func start(cmd *cobra.Command, args []string) error {
 	// Start the Service Mapper.
 	asc, err := apiserver.GetAPIClient()
 	if err != nil {
-		log.Errorf("Could not instanciate the API Server Client: %s", err.Error())
+		log.Errorf("Could not instantiate the API Server Client: %s", err.Error())
 	} else {
 		asc.StartServiceMapping()
 	}
