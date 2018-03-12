@@ -91,7 +91,7 @@ func init() {
 	Datadog.SetDefault("syslog_pem", "")
 	Datadog.SetDefault("cmd_host", "localhost")
 	Datadog.SetDefault("cmd_port", 5001)
-	Datadog.SetDefault("clusteragent_cmd_port", 5005)
+	Datadog.SetDefault("cluster_agent_cmd_port", 5005)
 	Datadog.SetDefault("default_integration_http_timeout", 9)
 	Datadog.SetDefault("enable_metadata_collection", true)
 	Datadog.SetDefault("enable_gohai", true)
@@ -182,6 +182,7 @@ func init() {
 	Datadog.SetDefault("leader_election", false)
 
 	// Datadog cluster agent
+	Datadog.SetDefault("cluster_agent", false)
 	Datadog.SetDefault("cluster_agent.auth_token", "")
 	Datadog.SetDefault("cluster_agent.url", "")
 	Datadog.SetDefault("cluster_agent.kubernetes_service_name", "dca")
@@ -256,8 +257,9 @@ func init() {
 	Datadog.BindEnv("ac_include")
 	Datadog.BindEnv("ac_exclude")
 
+	Datadog.BindEnv("cluster_agent")
 	Datadog.BindEnv("cluster_agent.auth_token")
-	Datadog.BindEnv("clusteragent_cmd_port")
+	Datadog.BindEnv("cluster_agent_cmd_port")
 
 	Datadog.BindEnv("forwarder_timeout")
 	Datadog.BindEnv("forwarder_retry_queue_max_size")

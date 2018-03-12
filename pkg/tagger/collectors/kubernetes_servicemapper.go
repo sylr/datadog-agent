@@ -15,6 +15,7 @@ import (
 	"github.com/ericchiang/k8s/api/v1"
 	metav1 "github.com/ericchiang/k8s/apis/meta/v1"
 
+	"github.com/DataDog/datadog-agent/pkg/config"
 	"github.com/DataDog/datadog-agent/pkg/tagger/utils"
 	"github.com/DataDog/datadog-agent/pkg/util/kubernetes/apiserver"
 	"github.com/DataDog/datadog-agent/pkg/util/kubernetes/kubelet"
@@ -24,9 +25,10 @@ import (
 TODO remove this file when we have the DCA
 */
 
-func getTagInfos(pods []*kubelet.Pod) []*TagInfo {
+func (c *KubeServiceCollector) getTagInfos(pods []*kubelet.Pod) []*TagInfo {
 	var tagInfo []*TagInfo
-
+	var serviceNames []string
+	var err error
 	for _, po := range pods {
 		if kubelet.IsPodReady(po) == false {
 			log.Debugf("pod %q is not ready, skipping", po.Metadata.Name)
@@ -48,8 +50,14 @@ func getTagInfos(pods []*kubelet.Pod) []*TagInfo {
 		}
 
 		tagList := utils.NewTagList()
-
-		serviceNames := apiserver.GetPodServiceNames(po.Spec.NodeName, po.Metadata.Name)
+		if !config.Datadog.GetBool("cluster_agent") {
+			serviceNames = apiserver.GetPodServiceNames(po.Spec.NodeName, po.Metadata.Name)
+		} else {
+			serviceNames, err = c.dcaClient.GetKubernetesServiceNames(po.Spec.NodeName, po.Metadata.Name)
+			if err != nil {
+				log.Debugf("Could not pull the service map from the Datadog Cluster Agent: %s", err.Error())
+			}
+		}
 		log.Debugf("nodeName: %s, podName: %s, services: %q", po.Spec.NodeName, po.Metadata.Name, strings.Join(serviceNames, ","))
 		for _, serviceName := range serviceNames {
 			log.Tracef("tagging %s kube_service:%s", po.Metadata.Name, serviceName)
